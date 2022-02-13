@@ -4,9 +4,9 @@
     <ClCompile Include="DllMain.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="NVApiDecorator.def" />
+    <ClInclude Include="Main.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Main.h" />
+    <Text Include="NVApiDecorator.def" />
   </ItemGroup>
 </Project>

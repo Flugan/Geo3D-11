@@ -19,26 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="device10Vtbl.txt" />
-    <Text Include="IDXGISwapChain.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="proxy10dll.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="proxy10dll.def" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\log.h" />
     <ClInclude Include="proxy10dll.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="D3D10.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="res\GPPActive.bmp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{CDD0FB7B-F24F-4559-841E-97DCBF9AAEA0}</ProjectGuid>

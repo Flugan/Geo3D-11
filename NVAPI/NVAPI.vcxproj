@@ -22,10 +22,10 @@
     <ClCompile Include="DllMain.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="NVApiDecorator.def" />
+    <ClInclude Include="Main.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Main.h" />
+    <Text Include="NVApiDecorator.def" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{374CBD29-E904-48E5-BF6F-A464B1EDCA86}</ProjectGuid>

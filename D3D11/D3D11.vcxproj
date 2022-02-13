@@ -19,18 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="device11Vtbl.txt" />
-    <Text Include="DeviceContextVtbl.txt" />
-    <Text Include="IDXGIFactory1Vtbl.txt" />
-    <Text Include="IDXGIFactoryVtbl.txt" />
-    <Text Include="IDXGISwapChain.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="Assembler.cpp" />
     <ClCompile Include="proxy11dll.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="proxy11dll.def" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\log.h" />
@@ -38,12 +28,6 @@
     <ClInclude Include="proxy11dll.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="D3D11.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="res\GPPActive.bmp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{D879FCFA-2C4E-4521-973F-99F2FE935508}</ProjectGuid>

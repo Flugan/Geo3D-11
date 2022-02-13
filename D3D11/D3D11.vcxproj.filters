@@ -15,23 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="device11Vtbl.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="DeviceContextVtbl.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="IDXGISwapChain.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="IDXGIFactory1Vtbl.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="IDXGIFactoryVtbl.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -55,20 +38,5 @@
     <ClCompile Include="Assembler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="proxy11dll.def">
-      <Filter>Source Files</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="D3D11.rc">
-      <Filter>Resource Files</Filter>
-    </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="res\GPPActive.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
   </ItemGroup>
 </Project>
