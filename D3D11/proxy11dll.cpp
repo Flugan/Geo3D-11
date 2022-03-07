@@ -413,62 +413,74 @@ void STDMETHODCALLTYPE D3D11C_VSSetShader(ID3D11DeviceContext* This, ID3D11Verte
 		sVSSetShader_Hook.fnVSSetShader(This, pVertexShader, ppClassInstances, NumClassInstances);
 	}
 	sVSSetShader_Hook.fnVSSetShader(This, pVertexShader, ppClassInstances, NumClassInstances);
-	/*
-	if (gl_left)
-		This->VSSetShaderResources(125, 1, &gStereoResourceViewLeft);
-	else
-		This->VSSetShaderResources(125, 1, &gStereoResourceViewRight);
-	*/
-	//This->VSSetShaderResources(120, 1, &gIniResourceView);
+	if (gStereoTextureLeft > 0) {
+		if (gl_left)
+			This->VSSetShaderResources(125, 1, &gStereoResourceViewLeft);
+		else
+			This->VSSetShaderResources(125, 1, &gStereoResourceViewRight);
+	}
+	if (gIniTexture > 0)
+		This->VSSetShaderResources(120, 1, &gIniResourceView);
 }
 
 void STDMETHODCALLTYPE D3D11C_PSSetShader(ID3D11DeviceContext * This, ID3D11PixelShader *pPixelShader, ID3D11ClassInstance *const *ppClassInstances, UINT NumClassInstances) {
 	sPSSetShader_Hook.fnPSSetShader(This, pPixelShader, ppClassInstances, NumClassInstances);
-	/*
-	if (gl_left)
-		This->PSSetShaderResources(125, 1, &gStereoResourceViewLeft);
-	else
-		This->PSSetShaderResources(125, 1, &gStereoResourceViewRight);
-	*/
-	//This->PSSetShaderResources(120, 1, &gIniResourceView);
+	if (gStereoTextureLeft > 0) {
+		if (gl_left)
+			This->PSSetShaderResources(125, 1, &gStereoResourceViewLeft);
+		else
+			This->PSSetShaderResources(125, 1, &gStereoResourceViewRight);
+	}
+	if (gIniTexture > 0)
+		This->PSSetShaderResources(120, 1, &gIniResourceView);
 }
 
 void STDMETHODCALLTYPE D3D11C_CSSetShader(ID3D11DeviceContext * This, ID3D11ComputeShader *pComputeShader, ID3D11ClassInstance *const *ppClassInstances, UINT NumClassInstances) {
 	sCSSetShader_Hook.fnCSSetShader(This, pComputeShader, ppClassInstances, NumClassInstances);
-	/*
-	if (gl_left)
-		This->CSSetShaderResources(125, 1, &gStereoResourceViewLeft);
-	else
-		This->CSSetShaderResources(125, 1, &gStereoResourceViewRight);
-	*/
-	//This->CSSetShaderResources(120, 1, &gIniResourceView);
+	if (gStereoTextureLeft > 0) {
+		if (gl_left)
+			This->CSSetShaderResources(125, 1, &gStereoResourceViewLeft);
+		else
+			This->CSSetShaderResources(125, 1, &gStereoResourceViewRight);
+	}
+	if (gIniTexture > 0)
+		This->CSSetShaderResources(120, 1, &gIniResourceView);
 }
 
 void STDMETHODCALLTYPE D3D11C_GSSetShader(ID3D11DeviceContext * This, ID3D11GeometryShader *pGeometryShader, ID3D11ClassInstance *const *ppClassInstances, UINT NumClassInstances) {
 	sGSSetShader_Hook.fnGSSetShader(This, pGeometryShader, ppClassInstances, NumClassInstances);
-	if (gl_left)
-		This->GSSetShaderResources(125, 1, &gStereoResourceViewLeft);
-	else
-		This->GSSetShaderResources(125, 1, &gStereoResourceViewRight);
-	This->GSSetShaderResources(120, 1, &gIniResourceView);
+	if (gStereoTextureLeft > 0) {
+		if (gl_left)
+			This->GSSetShaderResources(125, 1, &gStereoResourceViewLeft);
+		else
+			This->GSSetShaderResources(125, 1, &gStereoResourceViewRight);
+	}
+	if (gIniTexture > 0)
+		This->GSSetShaderResources(120, 1, &gIniResourceView);
 }
 
 void STDMETHODCALLTYPE D3D11C_HSSetShader(ID3D11DeviceContext * This, ID3D11HullShader *pHullShader, ID3D11ClassInstance *const *ppClassInstances, UINT NumClassInstances) {
 	sHSSetShader_Hook.fnHSSetShader(This, pHullShader, ppClassInstances, NumClassInstances);
-	if (gl_left)
-		This->HSSetShaderResources(125, 1, &gStereoResourceViewLeft);
-	else
-		This->HSSetShaderResources(125, 1, &gStereoResourceViewRight);
-	This->HSSetShaderResources(120, 1, &gIniResourceView);
+	if (gStereoTextureLeft > 0) {
+		if (gl_left)
+			This->HSSetShaderResources(125, 1, &gStereoResourceViewLeft);
+		else
+			This->HSSetShaderResources(125, 1, &gStereoResourceViewRight);
+	}
+	if (gIniTexture > 0)
+		This->HSSetShaderResources(120, 1, &gIniResourceView);
 }
 
 void STDMETHODCALLTYPE D3D11C_DSSetShader(ID3D11DeviceContext * This, ID3D11DomainShader *pDomainShader, ID3D11ClassInstance *const *ppClassInstances, UINT NumClassInstances) {
 	sDSSetShader_Hook.fnDSSetShader(This, pDomainShader, ppClassInstances, NumClassInstances);
-	if (gl_left)
-		This->DSSetShaderResources(125, 1, &gStereoResourceViewLeft);
-	else
-		This->DSSetShaderResources(125, 1, &gStereoResourceViewRight);
-	This->DSSetShaderResources(120, 1, &gIniResourceView);
+	if (gStereoTextureLeft > 0) {
+		if (gl_left)
+			This->DSSetShaderResources(125, 1, &gStereoResourceViewLeft);
+		else
+			This->DSSetShaderResources(125, 1, &gStereoResourceViewRight);
+	}
+	if (gIniTexture > 0)
+		This->DSSetShaderResources(120, 1, &gIniResourceView);
 }
 #pragma endregion
 
@@ -514,6 +526,7 @@ HRESULT CreateStereoParamTextureAndView(ID3D11Device* d3d11)
 	desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	desc.MiscFlags = 0;
 	d3d11->CreateTexture2D(&desc, &sysData, &gStereoTextureLeft);
+	LogInfo("StereoTexture: %d\n", gStereoTextureLeft > 0);
 
 	float* rightEye = (float*)sysData.pSysMem;
 	rightEye[0] = finalSeparation;
@@ -557,6 +570,7 @@ void CreateINITexture(ID3D11Device* d3d11) {
 	desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;		// allow CPU access for hotkeys
 	desc.MiscFlags = 0;
 	HRESULT ret = d3d11->CreateTexture1D(&desc, &initialData, &gIniTexture);
+	LogInfo("IniTexture: %d\n", gIniTexture > 0);
 	// Since we need to bind the texture to a shader input, we also need a resource view.
 	// The pDesc is set to NULL so that it will simply use the desc format above.
 	ret = d3d11->CreateShaderResourceView(gIniTexture, NULL, &gIniResourceView);
