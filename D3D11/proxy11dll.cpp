@@ -412,7 +412,6 @@ void STDMETHODCALLTYPE D3D11C_VSSetShader(ID3D11DeviceContext* This, ID3D11Verte
 		LogInfo("Unknown VS\n");
 		sVSSetShader_Hook.fnVSSetShader(This, pVertexShader, ppClassInstances, NumClassInstances);
 	}
-	sVSSetShader_Hook.fnVSSetShader(This, pVertexShader, ppClassInstances, NumClassInstances);
 	if (gStereoTextureLeft > 0) {
 		if (gl_left)
 			This->VSSetShaderResources(125, 1, &gStereoResourceViewLeft);
