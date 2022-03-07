@@ -8,56 +8,105 @@ static unordered_map<string, vector<DWORD>> codeBin;
 string convertF(DWORD original) {
 	char buf[80];
 	char buf2[80];
-
-	float fOriginal = reinterpret_cast<float &>(original);
-	sprintf_s(buf2, 80, "%.9E", fOriginal);
-	int len = strlen(buf2);
-	if (buf2[len - 4] == '-') {
-		int exp = atoi(buf2 + len - 3);
-		switch (exp) {
-		case 1:
-			sprintf_s(buf, 80, "%.9f", fOriginal);
-			break;
-		case 2:
-			sprintf_s(buf, 80, "%.10f", fOriginal);
-			break;
-		case 3:
-			sprintf_s(buf, 80, "%.11f", fOriginal);
-			break;
-		case 4:
-			sprintf_s(buf, 80, "%.12f", fOriginal);
-			break;
-		case 5:
-			sprintf_s(buf, 80, "%.13f", fOriginal);
-			break;
-		case 6:
-			sprintf_s(buf, 80, "%.14f", fOriginal);
-			break;
-		default:
-			sprintf_s(buf, 80, "%.9E", fOriginal);
-			break;
-		}
-	} else {
-		int exp = atoi(buf2 + len - 3);
-		switch (exp) {
-		case 0:
-			sprintf_s(buf, 80, "%.8f", fOriginal);
-			break;
-		default:
-			sprintf_s(buf, 80, "%.8f", fOriginal);
+	vector<DWORD> hex = { 0x7fc00000, 0xffc00000, 0xffff0000, 0x0000ffff, 0x7fffffff,
+		0xffaa5501, 0xffaa5500, 0x7fc10000, 0xfffeffff, 0xffe699f1, 0xfffe4000 };
+	bool bHex = false;
+	for (int i = 0; i < hex.size(); i++) {
+		if (original == hex[i]) {
+			bHex = true;
 			break;
 		}
 	}
+	float fOriginal = reinterpret_cast<float&>(original);
+	if (original == 0xFF800000) {
+		sprintf_s(buf, 80, "%s", "-1.#INF0000");
+	}
+	else if (original == 0x7F800000) {
+		sprintf_s(buf, 80, "%s", "1.#INF0000");
+	}
+	else if (original == 0xFFC00000) {
+		sprintf_s(buf, 80, "%s", "-1.#IND0000");
+	}
+	else if (original == 0xFFC10000) {
+		sprintf_s(buf, 80, "%s", "-1.#QNAN000");
+	}
+	else if (bHex) {
+		sprintf_s(buf, 80, "0x%08x", original);
+	}
+	else if (original < 0xffff) {
+		sprintf_s(buf, 80, "%d", original);
+	}
+	else if (original > 0xffff0000) {
+		sprintf_s(buf, 80, "%d", original);
+	}
+	else {
+		sprintf_s(buf, 80, "%.1f", fOriginal);
+		string s1(buf);
+		if (original == strToDWORD(s1))
+			return s1;
+
+		sprintf_s(buf, 80, "%.2f", fOriginal);
+		string s2(buf);
+		if (original == strToDWORD(s2))
+			return s2;
+
+		sprintf_s(buf, 80, "%.3f", fOriginal);
+		string s3(buf);
+		if (original == strToDWORD(s3))
+			return s3;
+
+		sprintf_s(buf, 80, "%.4f", fOriginal);
+		string s4(buf);
+		if (original == strToDWORD(s4))
+			return s4;
+
+		sprintf_s(buf, 80, "%.5f", fOriginal);
+		string s5(buf);
+		if (original == strToDWORD(s5))
+			return s5;
+
+		sprintf_s(buf, 80, "%.6f", fOriginal);
+		string s6(buf);
+		if (original == strToDWORD(s6))
+			return s6;
+
+		sprintf_s(buf, 80, "%.7f", fOriginal);
+		string s7(buf);
+		if (original == strToDWORD(s7))
+			return s7;
+
+		sprintf_s(buf, 80, "%.8f", fOriginal);
+		string s8(buf);
+		if (original == strToDWORD(s8))
+			return s8;
+
+		sprintf_s(buf, 80, "%.9f", fOriginal);
+		string s9(buf);
+		if (original == strToDWORD(s9))
+			return s9;
+
+		sprintf_s(buf, 80, "%.10f", fOriginal);
+		string s10(buf);
+		if (original == strToDWORD(s10))
+			return s10;
+
+		sprintf_s(buf, 80, "%.9E", fOriginal);
+		string s9E(buf);
+		if (original == strToDWORD(s9E))
+			return s9E;
+	}
 	string sLiteral(buf);
+
 	DWORD newDWORD = strToDWORD(sLiteral);
+	if (failFile == NULL)
+		fopen_s(&failFile, "debug.txt", "wb");
 	if (newDWORD != original) {
-		if (failFile == NULL)
-			fopen_s(&failFile, "debug.txt", "wb");
-		FILE *f = failFile;
-		fprintf(f, "%s\n", sLiteral.c_str());
-		fprintf(f, "o:%08X\n", original);
-		fprintf(f, "n:%08X\n", newDWORD);
-		fprintf(f, "\n");
+		FILE* f = failFile;
+		if (f != 0) {
+			fprintf(f, "orig: %08X\n", original);
+			fprintf(f, "new:  %s <> %08X\n", sLiteral.c_str(), newDWORD);
+			fprintf(f, "\n");
+		}
 	}
 	return sLiteral;
 }
@@ -489,7 +538,6 @@ DWORD strToDWORD(string s) {
 		DWORD decimalValue;
 		sscanf_s(s.c_str(), "0x%x", &decimalValue);
 		return decimalValue;
-		
 	}
 	if (s.find('.') < s.size()) {
 		float f = (float)atof(s.c_str());
