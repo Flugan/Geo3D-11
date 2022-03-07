@@ -26,8 +26,11 @@
     <ClInclude Include="..\log.h" />
     <ClInclude Include="..\vkeys.h" />
     <ClInclude Include="proxy11dll.h" />
-    <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\LICENSE" />
+    <None Include="..\README.md" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{D879FCFA-2C4E-4521-973F-99F2FE935508}</ProjectGuid>
@@ -177,7 +180,7 @@
       <ModuleDefinitionFile>proxy11dll.def</ModuleDefinitionFile>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>%(AdditionalDependencies);Nektra\NktHookLib64.lib;$(OutDir)nvapi64.lib;nvapi64.lib;D3dcompiler.lib;dxgi.lib;Xinput9_1_0.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);Nektra\NktHookLib64.lib;D3dcompiler.lib;dxgi.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -27,9 +27,6 @@
     <ClInclude Include="..\vkeys.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="proxy11dll.cpp">
@@ -38,5 +35,13 @@
     <ClCompile Include="Assembler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\LICENSE">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\README.md">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
