@@ -413,29 +413,35 @@ void STDMETHODCALLTYPE D3D11C_VSSetShader(ID3D11DeviceContext* This, ID3D11Verte
 		sVSSetShader_Hook.fnVSSetShader(This, pVertexShader, ppClassInstances, NumClassInstances);
 	}
 	sVSSetShader_Hook.fnVSSetShader(This, pVertexShader, ppClassInstances, NumClassInstances);
+	/*
 	if (gl_left)
 		This->VSSetShaderResources(125, 1, &gStereoResourceViewLeft);
 	else
 		This->VSSetShaderResources(125, 1, &gStereoResourceViewRight);
-	//This->VSSetShaderResources(120, 1, &gIniResourceView);
+	This->VSSetShaderResources(120, 1, &gIniResourceView);
+	*/
 }
 
 void STDMETHODCALLTYPE D3D11C_PSSetShader(ID3D11DeviceContext * This, ID3D11PixelShader *pPixelShader, ID3D11ClassInstance *const *ppClassInstances, UINT NumClassInstances) {
 	sPSSetShader_Hook.fnPSSetShader(This, pPixelShader, ppClassInstances, NumClassInstances);
+	/*
 	if (gl_left)
 		This->PSSetShaderResources(125, 1, &gStereoResourceViewLeft);
 	else
 		This->PSSetShaderResources(125, 1, &gStereoResourceViewRight);
-	//This->PSSetShaderResources(120, 1, &gIniResourceView);
+	This->PSSetShaderResources(120, 1, &gIniResourceView);
+	*/
 }
 
 void STDMETHODCALLTYPE D3D11C_CSSetShader(ID3D11DeviceContext * This, ID3D11ComputeShader *pComputeShader, ID3D11ClassInstance *const *ppClassInstances, UINT NumClassInstances) {
 	sCSSetShader_Hook.fnCSSetShader(This, pComputeShader, ppClassInstances, NumClassInstances);
+	/*
 	if (gl_left)
 		This->CSSetShaderResources(125, 1, &gStereoResourceViewLeft);
 	else
 		This->CSSetShaderResources(125, 1, &gStereoResourceViewRight);
-	//This->CSSetShaderResources(120, 1, &gIniResourceView);
+	This->CSSetShaderResources(120, 1, &gIniResourceView);
+	*/
 }
 
 void STDMETHODCALLTYPE D3D11C_GSSetShader(ID3D11DeviceContext * This, ID3D11GeometryShader *pGeometryShader, ID3D11ClassInstance *const *ppClassInstances, UINT NumClassInstances) {
@@ -553,8 +559,6 @@ void CreateINITexture(ID3D11Device* d3d11) {
 	HRESULT ret = d3d11->CreateTexture1D(&desc, &initialData, &gIniTexture);
 	// Since we need to bind the texture to a shader input, we also need a resource view.
 	// The pDesc is set to NULL so that it will simply use the desc format above.
-	D3D11_SHADER_RESOURCE_VIEW_DESC descRV;
-	memset(&descRV, 0, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
 	ret = d3d11->CreateShaderResourceView(gIniTexture, NULL, &gIniResourceView);
 }
 
@@ -578,12 +582,12 @@ void hook(ID3D11DeviceContext** ppContext) {
 			D3D11C_DSSS origDSSS = (D3D11C_DSSS)(*vTable)[64];
 			D3D11C_CSSS origCSSS = (D3D11C_CSSS)(*vTable)[69];
 
-			//cHookMgr.Hook(&(sPSSetShader_Hook.nHookId), (LPVOID*)&(sPSSetShader_Hook.fnPSSetShader), origPSSS, D3D11C_PSSetShader);
-			//cHookMgr.Hook(&(sVSSetShader_Hook.nHookId), (LPVOID*)&(sVSSetShader_Hook.fnVSSetShader), origVSSS, D3D11C_VSSetShader);
+			cHookMgr.Hook(&(sPSSetShader_Hook.nHookId), (LPVOID*)&(sPSSetShader_Hook.fnPSSetShader), origPSSS, D3D11C_PSSetShader);
+			cHookMgr.Hook(&(sVSSetShader_Hook.nHookId), (LPVOID*)&(sVSSetShader_Hook.fnVSSetShader), origVSSS, D3D11C_VSSetShader);
 			cHookMgr.Hook(&(sGSSetShader_Hook.nHookId), (LPVOID*)&(sGSSetShader_Hook.fnGSSetShader), origGSSS, D3D11C_GSSetShader);
 			cHookMgr.Hook(&(sHSSetShader_Hook.nHookId), (LPVOID*)&(sHSSetShader_Hook.fnHSSetShader), origHSSS, D3D11C_HSSetShader);
 			cHookMgr.Hook(&(sDSSetShader_Hook.nHookId), (LPVOID*)&(sDSSetShader_Hook.fnDSSetShader), origDSSS, D3D11C_DSSetShader);
-			//cHookMgr.Hook(&(sCSSetShader_Hook.nHookId), (LPVOID*)&(sCSSetShader_Hook.fnCSSetShader), origCSSS, D3D11C_CSSetShader);
+			cHookMgr.Hook(&(sCSSetShader_Hook.nHookId), (LPVOID*)&(sCSSetShader_Hook.fnCSSetShader), origCSSS, D3D11C_CSSetShader);
 
 			LogInfo("Context COM hooked\n");
 		}
