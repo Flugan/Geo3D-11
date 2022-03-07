@@ -19,8 +19,6 @@ bool				gl_Present_hooked = false;
 bool				gl_dump = false;
 bool				gl_log = false;
 bool				gl_left = true;
-string				sep = "0.091211";
-string				conv = "1.0";
 char				cwd[MAX_PATH];
 FILE *LogFile = 0;		// off by default.
 bool gLogDebug = false;
@@ -33,6 +31,12 @@ ID3D11Texture2D* gStereoTextureRight = NULL;
 ID3D11ShaderResourceView* gStereoResourceViewRight = NULL;
 ID3D11Texture1D *gIniTexture = NULL;
 ID3D11ShaderResourceView *gIniResourceView = NULL;
+
+float gSep;
+float gConv;
+float gEyeDist;
+float gScreenSize;
+float gFinalSep;
 
 map<UINT64, bool> hasStartPatch;
 map<UINT64, bool> hasStartFix;
@@ -124,6 +128,11 @@ string changeASM(vector<byte> ASM, bool left) {
 		else if (dcl == true) {
 			// after dcl
 			if (s.find("ret") < s.size()) {
+				char buf[80];
+				sprintf_s(buf, 80, "%.8f", gFinalSep);
+				string sep(buf);
+				sprintf_s(buf, 80, "%.3f", gConv);
+				string conv(buf);
 				string changeSep = left ? "l(-" + sep + ")" : "l(" + sep + ")";
 				shader +=
 					"eq r" + to_string(temp - 2) + ".x, r" + to_string(temp - 1) + ".w, l(1.0)\n" +
@@ -493,11 +502,7 @@ HRESULT CreateStereoParamTextureAndView(ID3D11Device* d3d11)
 {
 	HRESULT hr = 0;
 
-	float eyeDistance = 6.3f;
-	float screenSize = 15.6f;
-	float eyeSep = eyeDistance / (2.54f * screenSize * 16 / sqrtf(256 + 81));
-	float sep = 50;
-	float conv = 1.0;
+	float eyeSep = gEyeDist / (2.54f * gScreenSize * 16 / sqrtf(256 + 81));
 
 	const int StereoBytesPerPixel = 16;
 	const int stagingWidth = 8;
@@ -507,9 +512,9 @@ HRESULT CreateStereoParamTextureAndView(ID3D11Device* d3d11)
 	sysData.SysMemPitch = StereoBytesPerPixel * stagingWidth;
 	sysData.pSysMem = new unsigned char[sysData.SysMemPitch * stagingHeight];
 	float* leftEye = (float*)sysData.pSysMem;
-	float finalSeparation = eyeSep * sep * 0.01f;
-	leftEye[0] = -finalSeparation;
-	leftEye[1] = conv;
+	gFinalSep = eyeSep * gSep * 0.01f;
+	leftEye[0] = -gFinalSep;
+	leftEye[1] = gConv;
 	leftEye[2] = 1.0f;
 
 	D3D11_TEXTURE2D_DESC desc;
@@ -528,8 +533,8 @@ HRESULT CreateStereoParamTextureAndView(ID3D11Device* d3d11)
 	LogInfo("StereoTexture: %d\n", gStereoTextureLeft > 0);
 
 	float* rightEye = (float*)sysData.pSysMem;
-	rightEye[0] = finalSeparation;
-	rightEye[1] = conv;
+	rightEye[0] = gFinalSep;
+	rightEye[1] = gConv;
 	rightEye[2] = -1.0f;
 
 	d3d11->CreateTexture2D(&desc, &sysData, &gStereoTextureRight);
@@ -732,6 +737,18 @@ void InitInstance()
 
 	gl_log = GetPrivateProfileInt("Logging", "calls", gl_log, iniFile) > 0;
 	gl_dump = GetPrivateProfileInt("Rendering", "export_binary", gl_dump, iniFile) > 0;
+	if (GetPrivateProfileString("Stereo", "StereoSeparation", "50", setting, MAX_PATH, iniFile)) {
+		gSep = stof(setting);
+	}
+	if (GetPrivateProfileString("Stereo", "StereoConvergence", "1.0", setting, MAX_PATH, iniFile)) {
+		gConv = stof(setting);
+	}
+	if (GetPrivateProfileString("Stereo", "EyeDistance", "6.3", setting, MAX_PATH, iniFile)) {
+		gEyeDist = stof(setting);
+	}
+	if (GetPrivateProfileString("Stereo", "ScreenSize", "15.6", setting, MAX_PATH, iniFile)) {
+		gScreenSize = stof(setting);
+	}
 
 	if (gl_log) {
 		strcat_s(LOGfile, MAX_PATH, "\\d3d11_log.txt");
