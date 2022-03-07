@@ -417,7 +417,7 @@ void STDMETHODCALLTYPE D3D11C_VSSetShader(ID3D11DeviceContext* This, ID3D11Verte
 		This->VSSetShaderResources(125, 1, &gStereoResourceViewLeft);
 	else
 		This->VSSetShaderResources(125, 1, &gStereoResourceViewRight);
-	This->VSSetShaderResources(120, 1, &gIniResourceView);
+	//This->VSSetShaderResources(120, 1, &gIniResourceView);
 }
 
 void STDMETHODCALLTYPE D3D11C_PSSetShader(ID3D11DeviceContext * This, ID3D11PixelShader *pPixelShader, ID3D11ClassInstance *const *ppClassInstances, UINT NumClassInstances) {
@@ -426,7 +426,7 @@ void STDMETHODCALLTYPE D3D11C_PSSetShader(ID3D11DeviceContext * This, ID3D11Pixe
 		This->PSSetShaderResources(125, 1, &gStereoResourceViewLeft);
 	else
 		This->PSSetShaderResources(125, 1, &gStereoResourceViewRight);
-	This->PSSetShaderResources(120, 1, &gIniResourceView);
+	//This->PSSetShaderResources(120, 1, &gIniResourceView);
 }
 
 void STDMETHODCALLTYPE D3D11C_CSSetShader(ID3D11DeviceContext * This, ID3D11ComputeShader *pComputeShader, ID3D11ClassInstance *const *ppClassInstances, UINT NumClassInstances) {
@@ -435,7 +435,7 @@ void STDMETHODCALLTYPE D3D11C_CSSetShader(ID3D11DeviceContext * This, ID3D11Comp
 		This->CSSetShaderResources(125, 1, &gStereoResourceViewLeft);
 	else
 		This->CSSetShaderResources(125, 1, &gStereoResourceViewRight);
-	This->CSSetShaderResources(120, 1, &gIniResourceView);
+	//This->CSSetShaderResources(120, 1, &gIniResourceView);
 }
 
 void STDMETHODCALLTYPE D3D11C_GSSetShader(ID3D11DeviceContext * This, ID3D11GeometryShader *pGeometryShader, ID3D11ClassInstance *const *ppClassInstances, UINT NumClassInstances) {
