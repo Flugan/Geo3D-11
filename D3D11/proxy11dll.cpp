@@ -19,7 +19,7 @@ bool				gl_Present_hooked = false;
 bool				gl_dump = false;
 bool				gl_log = false;
 bool				gl_left = true;
-string				sep = "0.1";
+string				sep = "0.091211";
 string				conv = "1.0";
 char				cwd[MAX_PATH];
 FILE *LogFile = 0;		// off by default.
@@ -495,7 +495,7 @@ HRESULT CreateStereoParamTextureAndView(ID3D11Device* d3d11)
 
 	float eyeDistance = 6.3f;
 	float screenSize = 15.6f;
-	float eyeSep = eyeDistance / (screenSize * 16 / sqrtf(256 + 81));
+	float eyeSep = eyeDistance / (2.54f * screenSize * 16 / sqrtf(256 + 81));
 	float sep = 50;
 	float conv = 1.0;
 
