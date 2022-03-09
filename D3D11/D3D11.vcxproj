@@ -118,7 +118,7 @@
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <ModuleDefinitionFile>proxy11dll.def</ModuleDefinitionFile>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>%(AdditionalDependencies);Nektra\NktHookLib_Debug.lib;$(OutDir)nvapi.lib;nvapi.lib;D3dcompiler.lib;dxgi.lib;Xinput9_1_0.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);Nektra\NktHookLib_Debug.lib;D3dcompiler.lib;dxgi.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -136,7 +136,7 @@
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <ModuleDefinitionFile>proxy11dll.def</ModuleDefinitionFile>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>%(AdditionalDependencies);Nektra\NktHookLib64_Debug.lib;$(OutDir)nvapi64.lib;nvapi64.lib;D3dcompiler.lib;dxgi.lib;Xinput9_1_0.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);Nektra\NktHookLib64_Debug.lib;D3dcompiler.lib;dxgi.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -158,7 +158,7 @@
       <ModuleDefinitionFile>proxy11dll.def</ModuleDefinitionFile>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>%(AdditionalDependencies);Nektra\NktHookLib.lib;$(OutDir)nvapi.lib;nvapi.lib;D3dcompiler.lib;dxgi.lib;Xinput9_1_0.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);Nektra\NktHookLib.lib;D3dcompiler.lib;dxgi.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
