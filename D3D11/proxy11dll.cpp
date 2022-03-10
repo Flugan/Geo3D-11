@@ -1,6 +1,7 @@
 // proxydll.cpp
 #include "proxy11dll.h"
 #include "Nektra\NktHookLib.h"
+#include "D3D_Shaders\stdafx.h"
 #include "log.h"
 #include <map>
 #include <DirectXMath.h>
@@ -178,6 +179,21 @@ string changeASM(vector<byte> ASM, bool left) {
 	return shader;
 }
 
+static vector<byte> readFile(string fileName) {
+	vector<byte> buffer;
+	FILE* f;
+	fopen_s(&f, fileName.c_str(), "rb");
+	if (f != NULL) {
+		fseek(f, 0L, SEEK_END);
+		int fileSize = ftell(f);
+		buffer.resize(fileSize);
+		fseek(f, 0L, SEEK_SET);
+		size_t numRead = fread(buffer.data(), 1, buffer.size(), f);
+		fclose(f);
+	}
+	return buffer;
+}
+
 void dump(const void* pShaderBytecode, SIZE_T BytecodeLength, char* buffer) {
 	char path[MAX_PATH];
 	path[0] = 0;
@@ -206,7 +222,7 @@ vector<byte> assembled(char* buffer, const void* pShaderBytecode, SIZE_T Bytecod
 	vector<byte>* v = new vector<byte>(BytecodeLength);
 	copy((byte*)pShaderBytecode, (byte*)pShaderBytecode + BytecodeLength, v->begin());
 
-	vector<byte> byteCode = assembler(file, *v);
+	vector<byte> byteCode = assembler((vector<char>*)&file, *v);
 	return byteCode;
 }
 ID3DBlob* hlsled(char* buffer, char* shdModel){
@@ -252,7 +268,8 @@ HRESULT STDMETHODCALLTYPE D3D11_CreateVertexShader(ID3D11Device * This, const vo
 	for (int i = 0; i < bSize; i++) {
 		v.push_back(bArray[i]);
 	}
-	vector<byte> ASM = disassembler(v);
+	vector<byte> ASM;
+	disassembler(&v, &ASM, NULL);
 
 	string shaderL = changeASM(ASM, true);
 	string shaderR = changeASM(ASM, false);
@@ -265,14 +282,14 @@ HRESULT STDMETHODCALLTYPE D3D11_CreateVertexShader(ID3D11Device * This, const vo
 		return hr;
 	}
 
-	vector<byte> a;
+	vector<char> a;
 	VSO vso = {};
 
 	a.clear();
 	for (int i = 0; i < shaderL.length(); i++) {
 		a.push_back(shaderL[i]);
 	}
-	auto compiled = assembler(a, v);
+	auto compiled = assembler(&a, v);
 	hr = sCreateVertexShader_Hook.fnCreateVertexShader(This, compiled.data(), compiled.size(), pClassLinkage, ppVertexShader);
 	vso.Left = (ID3D11VertexShader*)*ppVertexShader;
 
@@ -280,7 +297,7 @@ HRESULT STDMETHODCALLTYPE D3D11_CreateVertexShader(ID3D11Device * This, const vo
 	for (int i = 0; i < shaderR.length(); i++) {
 		a.push_back(shaderR[i]);
 	}
-	compiled = assembler(a, v);
+	compiled = assembler(&a, v);
 	hr = sCreateVertexShader_Hook.fnCreateVertexShader(This, compiled.data(), compiled.size(), pClassLinkage, ppVertexShader);
 	vso.Right = (ID3D11VertexShader*)*ppVertexShader;
 	VSOmap[vso.Right] = vso;

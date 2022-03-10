@@ -19,7 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Assembler.cpp" />
+    <ClCompile Include="..\D3D_Shaders\Assembler.cpp" />
+    <ClCompile Include="..\D3D_Shaders\SignatureParser.cpp" />
     <ClCompile Include="proxy11dll.cpp" />
   </ItemGroup>
   <ItemGroup>
