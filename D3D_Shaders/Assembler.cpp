@@ -3230,9 +3230,6 @@ vector<byte> assembler(vector<char> *asmFile, vector<byte> origBytecode,
 	DWORD numChunks;
 	vector<DWORD> chunkOffsets;
 
-	// TODO: Add robust error checking here (origBytecode is at least as large as
-	// the header, etc). I've added a check for numChunks < 1 as that
-	// would lead to codeByteStart being used uninitialised
 	byte* pPosition = origBytecode.data();
 	std::memcpy(fourcc, pPosition, 4);
 	pPosition += 4;
@@ -3243,8 +3240,6 @@ vector<byte> assembler(vector<char> *asmFile, vector<byte> origBytecode,
 	fSize = *(DWORD*)pPosition;
 	pPosition += 4;
 	numChunks = *(DWORD*)pPosition;
-	if (numChunks < 1)
-		throw std::invalid_argument("assembler: Bad shader binary");
 	pPosition += 4;
 	chunkOffsets.resize(numChunks);
 	std::memcpy(chunkOffsets.data(), pPosition, 4 * numChunks);
@@ -3261,7 +3256,6 @@ vector<byte> assembler(vector<char> *asmFile, vector<byte> origBytecode,
 		if (memcmp(codeByteStart, "SHEX", 4) == 0 || memcmp(codeByteStart, "SHDR", 4) == 0)
 			break;
 	}
-	// FIXME: If neither SHEX or SHDR was found in the shader, codeByteStart will be garbage
 	vector<string> lines = stringToLines(asmBuffer, asmSize);
 	DWORD* codeStart = (DWORD*)(codeByteStart + 8);
 	bool codeStarted = false;
