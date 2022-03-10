@@ -219,10 +219,8 @@ vector<byte> assembled(char* buffer, const void* pShaderBytecode, SIZE_T Bytecod
 	strcat_s(path, MAX_PATH, ".txt");
 	auto file = readFile(path);
 
-	vector<byte>* v = new vector<byte>(BytecodeLength);
-	copy((byte*)pShaderBytecode, (byte*)pShaderBytecode + BytecodeLength, v->begin());
-
-	vector<byte> byteCode = assembler((vector<char>*)&file, *v);
+	vector<byte> byteCode;
+	AssembleFluganWithSignatureParsing((vector<char>*)&file, &byteCode);
 	return byteCode;
 }
 ID3DBlob* hlsled(char* buffer, char* shdModel){
