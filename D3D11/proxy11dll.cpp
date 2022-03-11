@@ -179,8 +179,8 @@ string changeASM(vector<byte> ASM, bool left) {
 	return shader;
 }
 
-static vector<byte> readFile(string fileName) {
-	vector<byte> buffer;
+static vector<char> readFile(string fileName) {
+	vector<char> buffer;
 	FILE* f;
 	fopen_s(&f, fileName.c_str(), "rb");
 	if (f != NULL) {
@@ -217,10 +217,17 @@ vector<byte> assembled(char* buffer, const void* pShaderBytecode, SIZE_T Bytecod
 	strcat_s(path, MAX_PATH, "\\ShaderFixes\\");
 	strcat_s(path, MAX_PATH, buffer);
 	strcat_s(path, MAX_PATH, ".txt");
-	auto file = readFile(path);
+	vector<char> file = readFile(path);
 
 	vector<byte> byteCode;
-	AssembleFluganWithSignatureParsing((vector<char>*)&file, &byteCode);
+	//AssembleFluganWithSignatureParsing(&file, &byteCode);
+
+	vector<byte>* v = new vector<byte>(BytecodeLength);
+	copy((byte*)pShaderBytecode, (byte*)pShaderBytecode + BytecodeLength, v->begin());
+
+	if (byteCode.size() == 0) {
+		byteCode = assembler(&file, *v);
+	}
 	return byteCode;
 }
 ID3DBlob* hlsled(char* buffer, char* shdModel){
@@ -230,7 +237,7 @@ ID3DBlob* hlsled(char* buffer, char* shdModel){
 	strcat_s(path, MAX_PATH, "\\ShaderFixes\\");
 	strcat_s(path, MAX_PATH, buffer);
 	strcat_s(path, MAX_PATH, "_replace.txt");
-	auto file = readFile(path);
+	vector<char> file = readFile(path);
 
 	ID3DBlob* pByteCode = nullptr;
 	ID3DBlob* pErrorMsgs = nullptr;
@@ -512,28 +519,6 @@ HRESULT STDMETHODCALLTYPE DXGIH_Present(IDXGISwapChain* This, UINT SyncInterval,
 	return sDXGI_Present_Hook.fnDXGI_Present(This, SyncInterval, Flags);
 }
 
-HRESULT STDMETHODCALLTYPE DXGI_CreateSwapChain1(IDXGIFactory1* This, IUnknown* pDevice, DXGI_SWAP_CHAIN_DESC* pDesc, IDXGISwapChain** ppSwapChain) {
-	LogInfo("CreateSwapChain1\n");
-	HRESULT hr = sCreateSwapChain_Hook.fnCreateSwapChain1(This, pDevice, pDesc, ppSwapChain);
-	if (!gl_Present_hooked) {
-		LogInfo("Present hooked\n");
-		gl_Present_hooked = true;
-		DWORD_PTR*** vTable = (DWORD_PTR***)*ppSwapChain;
-		DXGI_Present origPresent = (DXGI_Present)(*vTable)[8];
-		cHookMgr.Hook(&(sDXGI_Present_Hook.nHookId), (LPVOID*)&(sDXGI_Present_Hook.fnDXGI_Present), origPresent, DXGIH_Present);
-	}
-	return hr;
-}
-
-void HackedPresent() {
-	IDXGIFactory1* pFactory;
-	HRESULT hr = CreateDXGIFactory1(__uuidof(IDXGIFactory1), (void**)(&pFactory));
-	DWORD_PTR*** vTable = (DWORD_PTR***)pFactory;
-	DXGI_CSC1 origCSC1 = (DXGI_CSC1)(*vTable)[10];
-	cHookMgr.Hook(&(sCreateSwapChain_Hook.nHookId), (LPVOID*)&(sCreateSwapChain_Hook.fnCreateSwapChain1), origCSC1, DXGI_CreateSwapChain1);
-	pFactory->Release();
-}
-
 #pragma region Hooks
 HRESULT CreateStereoParamTextureAndView(ID3D11Device* d3d11)
 {
@@ -674,7 +659,40 @@ void hook(ID3D11Device** ppDevice) {
 			cHookMgr.Hook(&(sGetImmediateContext_Hook.nHookId), (LPVOID*)&(sGetImmediateContext_Hook.fn), origGIC, D3D11_GetImmediateContext);
 			LogInfo("Device COM hooked\n");
 
-			HackedPresent();
+			IDXGIFactory1* pFactory;
+			HRESULT hr = CreateDXGIFactory1(__uuidof(IDXGIFactory1), (void**)(&pFactory));
+
+			// Temp window
+			HWND dummyHWND = ::CreateWindow("STATIC", "dummy", WS_DISABLED, 0, 0, 1, 1, NULL, NULL, NULL, NULL);
+			::SetWindowTextA(dummyHWND, "Dummy Window!");
+
+			// create a struct to hold information about the swap chain
+			DXGI_SWAP_CHAIN_DESC scd;
+
+			// clear out the struct for use
+			ZeroMemory(&scd, sizeof(DXGI_SWAP_CHAIN_DESC));
+
+			// fill the swap chain description struct
+			scd.BufferCount = 1;									// one back buffer
+			scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;		// use 32-bit color
+			scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;		// how swap chain is to be used
+			scd.OutputWindow = dummyHWND;							// the window to be used
+			scd.SampleDesc.Count = 1;								// how many multisamples
+			scd.Windowed = TRUE;									// windowed/full-screen mode
+
+			IDXGISwapChain* pSC;
+
+			pFactory->CreateSwapChain(*ppDevice, &scd, &pSC);
+
+			DWORD_PTR*** vTable2 = (DWORD_PTR***)pSC;
+			DXGI_Present origPresent = (DXGI_Present)(*vTable2)[8];
+
+			pSC->Release();
+			pFactory->Release();
+			::DestroyWindow(dummyHWND);
+
+			cHookMgr.Hook(&(sDXGI_Present_Hook.nHookId), (LPVOID*)&(sDXGI_Present_Hook.fnDXGI_Present), origPresent, DXGIH_Present);
+
 			gl_hookedDevice = true;
 		}
 		InitializeStereo(*ppDevice);
@@ -740,17 +758,19 @@ void InitInstance()
 	}
 
 	gl_log = GetPrivateProfileInt("Logging", "calls", gl_log, iniFile) > 0;
+
 	gl_dump = GetPrivateProfileInt("Rendering", "export_binary", gl_dump, iniFile) > 0;
-	if (GetPrivateProfileString("Stereo", "StereoSeparation", "50", setting, MAX_PATH, iniFile)) {
+
+	if (GetPrivateProfileString("StereoSettings", "StereoSeparation", "50", setting, MAX_PATH, iniFile)) {
 		gSep = stof(setting);
 	}
-	if (GetPrivateProfileString("Stereo", "StereoConvergence", "1.0", setting, MAX_PATH, iniFile)) {
+	if (GetPrivateProfileString("StereoSettings", "StereoConvergence", "1.0", setting, MAX_PATH, iniFile)) {
 		gConv = stof(setting);
 	}
-	if (GetPrivateProfileString("Stereo", "EyeDistance", "6.3", setting, MAX_PATH, iniFile)) {
+	if (GetPrivateProfileString("StereoSettings", "EyeDistance", "6.3", setting, MAX_PATH, iniFile)) {
 		gEyeDist = stof(setting);
 	}
-	if (GetPrivateProfileString("Stereo", "ScreenSize", "15.6", setting, MAX_PATH, iniFile)) {
+	if (GetPrivateProfileString("StereoSettings", "ScreenSize", "15.6", setting, MAX_PATH, iniFile)) {
 		gScreenSize = stof(setting);
 	}
 
