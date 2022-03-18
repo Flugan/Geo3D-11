@@ -606,6 +606,7 @@ void InitializeStereo(ID3D11Device * pDevice) {
 	CreateINITexture(pDevice);
 	// Create our stereo parameter texture
 	CreateStereoParamTextureAndView(pDevice);
+	gl_left = true;
 	LogInfo("Stereo Initialized\n");
 }
 
@@ -701,7 +702,6 @@ void hook(ID3D11Device** ppDevice) {
 #pragma endregion
 
 #pragma region exports
-// Exported function (faking d3d11.dll's export)
 // Exported function (faking d3d11.dll's export)
 HRESULT WINAPI D3D11CreateDevice(IDXGIAdapter* pAdapter, D3D_DRIVER_TYPE DriverType, HMODULE Software, UINT Flags, const D3D_FEATURE_LEVEL* pFeatureLevels,
 	UINT FeatureLevels, UINT SDKVersion, ID3D11Device** ppDevice, D3D_FEATURE_LEVEL* pFeatureLevel, ID3D11DeviceContext** ppImmediateContext) {
