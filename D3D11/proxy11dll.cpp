@@ -201,6 +201,7 @@ vector<byte> assembled(char* buffer, const void* pShaderBytecode, SIZE_T Bytecod
 	strcat_s(path, MAX_PATH, "\\ShaderFixes\\");
 	strcat_s(path, MAX_PATH, buffer);
 	strcat_s(path, MAX_PATH, ".txt");
+	LogInfo("loaded: %s\n", path);
 	auto file = readFile(path);
 
 	vector<byte>* v = new vector<byte>(BytecodeLength);
@@ -216,6 +217,7 @@ ID3DBlob* hlsled(char* buffer, char* shdModel){
 	strcat_s(path, MAX_PATH, "\\ShaderFixes\\");
 	strcat_s(path, MAX_PATH, buffer);
 	strcat_s(path, MAX_PATH, "_replace.txt");
+	LogInfo("loaded: %s\n", path);
 	auto file = readFile(path);
 
 	ID3DBlob* pByteCode = nullptr;
