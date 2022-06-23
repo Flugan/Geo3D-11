@@ -747,7 +747,7 @@ void InitInstance()
 	_getcwd(iniFile, MAX_PATH);
 	_getcwd(LOGfile, MAX_PATH);
 	_getcwd(cwd, MAX_PATH);
-	strcat_s(iniFile, MAX_PATH, "\\d3dx.ini");
+	strcat_s(iniFile, MAX_PATH, "\\d3d11.ini");
 
 	// If specified in Debug section, wait for Attach to Debugger.
 	bool waitfordebugger = GetPrivateProfileInt("Debug", "attach", 0, iniFile) > 0;
@@ -757,20 +757,20 @@ void InitInstance()
 		} while (!IsDebuggerPresent());
 	}
 
-	gl_log = GetPrivateProfileInt("Logging", "calls", gl_log, iniFile) > 0;
+	gl_log = GetPrivateProfileInt("Dump", "log", gl_log, iniFile) > 0;
 
-	gl_dump = GetPrivateProfileInt("Rendering", "export_binary", gl_dump, iniFile) > 0;
+	gl_dump = GetPrivateProfileInt("Dump", "bin", gl_dump, iniFile) > 0;
 
-	if (GetPrivateProfileString("StereoSettings", "StereoSeparation", "50", setting, MAX_PATH, iniFile)) {
+	if (GetPrivateProfileString("Stereo", "Separation", "50", setting, MAX_PATH, iniFile)) {
 		gSep = stof(setting);
 	}
-	if (GetPrivateProfileString("StereoSettings", "StereoConvergence", "1.0", setting, MAX_PATH, iniFile)) {
+	if (GetPrivateProfileString("Stereo", "Convergence", "1.0", setting, MAX_PATH, iniFile)) {
 		gConv = stof(setting);
 	}
-	if (GetPrivateProfileString("StereoSettings", "EyeDistance", "6.3", setting, MAX_PATH, iniFile)) {
+	if (GetPrivateProfileString("Stereo", "EyeDistance", "6.5", setting, MAX_PATH, iniFile)) {
 		gEyeDist = stof(setting);
 	}
-	if (GetPrivateProfileString("StereoSettings", "ScreenSize", "15.6", setting, MAX_PATH, iniFile)) {
+	if (GetPrivateProfileString("Stereo", "ScreenSize", "27", setting, MAX_PATH, iniFile)) {
 		gScreenSize = stof(setting);
 	}
 
