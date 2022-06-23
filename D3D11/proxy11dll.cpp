@@ -606,7 +606,7 @@ void InitializeStereo(ID3D11Device * pDevice) {
 	CreateINITexture(pDevice);
 	// Create our stereo parameter texture
 	CreateStereoParamTextureAndView(pDevice);
-	gl_left = true;
+	gl_left = false;
 	LogInfo("Stereo Initialized\n");
 }
 
