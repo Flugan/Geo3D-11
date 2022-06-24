@@ -280,7 +280,7 @@ HRESULT STDMETHODCALLTYPE D3D11_CreateVertexShader(ID3D11Device * This, const vo
 	string shaderR = changeASM(ASM, false);
 
 	if (shaderL == "") {
-		hr = sCreateVertexShader_Hook.fnCreateVertexShader(This, pShaderBytecode, BytecodeLength, pClassLinkage, ppVertexShader);
+		hr = sCreateVertexShader_Hook.fn(This, pShaderBytecode, BytecodeLength, pClassLinkage, ppVertexShader);
 		VSO vso = {};
 		vso.Neutral = (ID3D11VertexShader*)*ppVertexShader;
 		VSOmap[vso.Neutral] = vso;
@@ -295,7 +295,7 @@ HRESULT STDMETHODCALLTYPE D3D11_CreateVertexShader(ID3D11Device * This, const vo
 		a.push_back(shaderL[i]);
 	}
 	auto compiled = assembler(&a, v);
-	hr = sCreateVertexShader_Hook.fnCreateVertexShader(This, compiled.data(), compiled.size(), pClassLinkage, ppVertexShader);
+	hr = sCreateVertexShader_Hook.fn(This, compiled.data(), compiled.size(), pClassLinkage, ppVertexShader);
 	vso.Left = (ID3D11VertexShader*)*ppVertexShader;
 
 	a.clear();
@@ -303,7 +303,7 @@ HRESULT STDMETHODCALLTYPE D3D11_CreateVertexShader(ID3D11Device * This, const vo
 		a.push_back(shaderR[i]);
 	}
 	compiled = assembler(&a, v);
-	hr = sCreateVertexShader_Hook.fnCreateVertexShader(This, compiled.data(), compiled.size(), pClassLinkage, ppVertexShader);
+	hr = sCreateVertexShader_Hook.fn(This, compiled.data(), compiled.size(), pClassLinkage, ppVertexShader);
 	vso.Right = (ID3D11VertexShader*)*ppVertexShader;
 	VSOmap[vso.Right] = vso;
 	return hr;
@@ -320,12 +320,12 @@ HRESULT STDMETHODCALLTYPE D3D11_CreatePixelShader(ID3D11Device * This, const voi
 	HRESULT res;
 	if (hasStartPatch.count(_crc)) {
 		auto data = assembled(buffer, pShaderBytecode, BytecodeLength);
-		res = sCreatePixelShader_Hook.fnCreatePixelShader(This, data.data(), data.size(), pClassLinkage, ppPixelShader);
+		res = sCreatePixelShader_Hook.fn(This, data.data(), data.size(), pClassLinkage, ppPixelShader);
 	} else if (hasStartFix.count(_crc)) {
 		ID3DBlob* pByteCode = hlsled(buffer, "ps_5_0");
-		res = sCreatePixelShader_Hook.fnCreatePixelShader(This, pByteCode->GetBufferPointer(), pByteCode->GetBufferSize(), pClassLinkage, ppPixelShader);
+		res = sCreatePixelShader_Hook.fn(This, pByteCode->GetBufferPointer(), pByteCode->GetBufferSize(), pClassLinkage, ppPixelShader);
 	} else {
-		res = sCreatePixelShader_Hook.fnCreatePixelShader(This, pShaderBytecode, BytecodeLength, pClassLinkage, ppPixelShader);
+		res = sCreatePixelShader_Hook.fn(This, pShaderBytecode, BytecodeLength, pClassLinkage, ppPixelShader);
 	}
 	return res;
 }
@@ -341,12 +341,12 @@ HRESULT STDMETHODCALLTYPE D3D11_CreateGeometryShader(ID3D11Device * This, const 
 	HRESULT res;
 	if (hasStartPatch.count(_crc)) {
 		auto data = assembled(buffer, pShaderBytecode, BytecodeLength);
-		res = sCreateGeometryShader_Hook.fnCreateGeometryShader(This, data.data(), data.size(), pClassLinkage, ppGeometryShader);
+		res = sCreateGeometryShader_Hook.fn(This, data.data(), data.size(), pClassLinkage, ppGeometryShader);
 	} else if (hasStartFix.count(_crc)) {
 		ID3DBlob* pByteCode = hlsled(buffer, "gs_5_0");
-		res = sCreateGeometryShader_Hook.fnCreateGeometryShader(This, pByteCode->GetBufferPointer(), pByteCode->GetBufferSize(), pClassLinkage, ppGeometryShader);
+		res = sCreateGeometryShader_Hook.fn(This, pByteCode->GetBufferPointer(), pByteCode->GetBufferSize(), pClassLinkage, ppGeometryShader);
 	} else {
-		res = sCreateGeometryShader_Hook.fnCreateGeometryShader(This, pShaderBytecode, BytecodeLength, pClassLinkage, ppGeometryShader);
+		res = sCreateGeometryShader_Hook.fn(This, pShaderBytecode, BytecodeLength, pClassLinkage, ppGeometryShader);
 	}
 	return res;
 }
@@ -362,12 +362,12 @@ HRESULT STDMETHODCALLTYPE D3D11_CreateHullShader(ID3D11Device * This, const void
 	HRESULT res;
 	if (hasStartPatch.count(_crc)) {
 		auto data = assembled(buffer, pShaderBytecode, BytecodeLength);
-		res = sCreateHullShader_Hook.fnCreateHullShader(This, data.data(), data.size(), pClassLinkage, ppHullShader);
+		res = sCreateHullShader_Hook.fn(This, data.data(), data.size(), pClassLinkage, ppHullShader);
 	} else if (hasStartFix.count(_crc)) {
 		ID3DBlob* pByteCode = hlsled(buffer, "hs_5_0");
-		res = sCreateHullShader_Hook.fnCreateHullShader(This, pByteCode->GetBufferPointer(), pByteCode->GetBufferSize(), pClassLinkage, ppHullShader);
+		res = sCreateHullShader_Hook.fn(This, pByteCode->GetBufferPointer(), pByteCode->GetBufferSize(), pClassLinkage, ppHullShader);
 	} else {
-		res = sCreateHullShader_Hook.fnCreateHullShader(This, pShaderBytecode, BytecodeLength, pClassLinkage, ppHullShader);
+		res = sCreateHullShader_Hook.fn(This, pShaderBytecode, BytecodeLength, pClassLinkage, ppHullShader);
 	}
 	return res;
 }
@@ -383,12 +383,12 @@ HRESULT STDMETHODCALLTYPE D3D11_CreateDomainShader(ID3D11Device * This, const vo
 	HRESULT res;
 	if (hasStartPatch.count(_crc)) {
 		auto data = assembled(buffer, pShaderBytecode, BytecodeLength);
-		res = sCreateDomainShader_Hook.fnCreateDomainShader(This, data.data(), data.size(), pClassLinkage, ppDomainShader);
+		res = sCreateDomainShader_Hook.fn(This, data.data(), data.size(), pClassLinkage, ppDomainShader);
 	} else if (hasStartFix.count(_crc)) {
 		ID3DBlob* pByteCode = hlsled(buffer, "ds_5_0");
-		res = sCreateDomainShader_Hook.fnCreateDomainShader(This, pByteCode->GetBufferPointer(), pByteCode->GetBufferSize(), pClassLinkage, ppDomainShader);
+		res = sCreateDomainShader_Hook.fn(This, pByteCode->GetBufferPointer(), pByteCode->GetBufferSize(), pClassLinkage, ppDomainShader);
 	} else {
-		res = sCreateDomainShader_Hook.fnCreateDomainShader(This, pShaderBytecode, BytecodeLength, pClassLinkage, ppDomainShader);
+		res = sCreateDomainShader_Hook.fn(This, pShaderBytecode, BytecodeLength, pClassLinkage, ppDomainShader);
 	}
 	return res;
 }
@@ -405,12 +405,12 @@ HRESULT STDMETHODCALLTYPE D3D11_CreateComputeShader(ID3D11Device * This, const v
 	HRESULT res;
 	if (hasStartPatch.count(_crc)) {
 		auto data = assembled(buffer, pShaderBytecode, BytecodeLength);
-		res = sCreateComputeShader_Hook.fnCreateComputeShader(This, data.data(), data.size(), pClassLinkage, ppComputeShader);
+		res = sCreateComputeShader_Hook.fn(This, data.data(), data.size(), pClassLinkage, ppComputeShader);
 	} else if (hasStartFix.count(_crc)) {
 		ID3DBlob* pByteCode = hlsled(buffer, "ds_5_0");
-		res = sCreateComputeShader_Hook.fnCreateComputeShader(This, pByteCode->GetBufferPointer(), pByteCode->GetBufferSize(), pClassLinkage, ppComputeShader);
+		res = sCreateComputeShader_Hook.fn(This, pByteCode->GetBufferPointer(), pByteCode->GetBufferSize(), pClassLinkage, ppComputeShader);
 	} else {
-		res = sCreateComputeShader_Hook.fnCreateComputeShader(This, pShaderBytecode, BytecodeLength, pClassLinkage, ppComputeShader);
+		res = sCreateComputeShader_Hook.fn(This, pShaderBytecode, BytecodeLength, pClassLinkage, ppComputeShader);
 	}
 	return res;
 }
@@ -427,21 +427,21 @@ void STDMETHODCALLTYPE D3D11C_VSSetShader(ID3D11DeviceContext* This, ID3D11Verte
 		VSO* vso = &VSOmap[pVertexShader];
 		if (vso->Neutral) {
 			LogInfo("No output VS\n");
-			sVSSetShader_Hook.fnVSSetShader(This, vso->Neutral, ppClassInstances, NumClassInstances);
+			sVSSetShader_Hook.fn(This, vso->Neutral, ppClassInstances, NumClassInstances);
 		}
 		else {
 			LogInfo("Stereo VS\n");
 			if (gl_left) {
-				sVSSetShader_Hook.fnVSSetShader(This, vso->Left, ppClassInstances, NumClassInstances);
+				sVSSetShader_Hook.fn(This, vso->Left, ppClassInstances, NumClassInstances);
 			}
 			else {
-				sVSSetShader_Hook.fnVSSetShader(This, vso->Right, ppClassInstances, NumClassInstances);
+				sVSSetShader_Hook.fn(This, vso->Right, ppClassInstances, NumClassInstances);
 			}
 		}
 	}
 	else {
 		LogInfo("Unknown VS\n");
-		sVSSetShader_Hook.fnVSSetShader(This, pVertexShader, ppClassInstances, NumClassInstances);
+		sVSSetShader_Hook.fn(This, pVertexShader, ppClassInstances, NumClassInstances);
 	}
 	if (gStereoTextureLeft > 0) {
 		if (gl_left)
@@ -454,7 +454,7 @@ void STDMETHODCALLTYPE D3D11C_VSSetShader(ID3D11DeviceContext* This, ID3D11Verte
 }
 
 void STDMETHODCALLTYPE D3D11C_PSSetShader(ID3D11DeviceContext * This, ID3D11PixelShader *pPixelShader, ID3D11ClassInstance *const *ppClassInstances, UINT NumClassInstances) {
-	sPSSetShader_Hook.fnPSSetShader(This, pPixelShader, ppClassInstances, NumClassInstances);
+	sPSSetShader_Hook.fn(This, pPixelShader, ppClassInstances, NumClassInstances);
 	if (gStereoTextureLeft > 0) {
 		if (gl_left)
 			This->PSSetShaderResources(125, 1, &gStereoResourceViewLeft);
@@ -466,7 +466,7 @@ void STDMETHODCALLTYPE D3D11C_PSSetShader(ID3D11DeviceContext * This, ID3D11Pixe
 }
 
 void STDMETHODCALLTYPE D3D11C_CSSetShader(ID3D11DeviceContext * This, ID3D11ComputeShader *pComputeShader, ID3D11ClassInstance *const *ppClassInstances, UINT NumClassInstances) {
-	sCSSetShader_Hook.fnCSSetShader(This, pComputeShader, ppClassInstances, NumClassInstances);
+	sCSSetShader_Hook.fn(This, pComputeShader, ppClassInstances, NumClassInstances);
 	if (gStereoTextureLeft > 0) {
 		if (gl_left)
 			This->CSSetShaderResources(125, 1, &gStereoResourceViewLeft);
@@ -478,7 +478,7 @@ void STDMETHODCALLTYPE D3D11C_CSSetShader(ID3D11DeviceContext * This, ID3D11Comp
 }
 
 void STDMETHODCALLTYPE D3D11C_GSSetShader(ID3D11DeviceContext * This, ID3D11GeometryShader *pGeometryShader, ID3D11ClassInstance *const *ppClassInstances, UINT NumClassInstances) {
-	sGSSetShader_Hook.fnGSSetShader(This, pGeometryShader, ppClassInstances, NumClassInstances);
+	sGSSetShader_Hook.fn(This, pGeometryShader, ppClassInstances, NumClassInstances);
 	if (gStereoTextureLeft > 0) {
 		if (gl_left)
 			This->GSSetShaderResources(125, 1, &gStereoResourceViewLeft);
@@ -490,7 +490,7 @@ void STDMETHODCALLTYPE D3D11C_GSSetShader(ID3D11DeviceContext * This, ID3D11Geom
 }
 
 void STDMETHODCALLTYPE D3D11C_HSSetShader(ID3D11DeviceContext * This, ID3D11HullShader *pHullShader, ID3D11ClassInstance *const *ppClassInstances, UINT NumClassInstances) {
-	sHSSetShader_Hook.fnHSSetShader(This, pHullShader, ppClassInstances, NumClassInstances);
+	sHSSetShader_Hook.fn(This, pHullShader, ppClassInstances, NumClassInstances);
 	if (gStereoTextureLeft > 0) {
 		if (gl_left)
 			This->HSSetShaderResources(125, 1, &gStereoResourceViewLeft);
@@ -502,7 +502,7 @@ void STDMETHODCALLTYPE D3D11C_HSSetShader(ID3D11DeviceContext * This, ID3D11Hull
 }
 
 void STDMETHODCALLTYPE D3D11C_DSSetShader(ID3D11DeviceContext * This, ID3D11DomainShader *pDomainShader, ID3D11ClassInstance *const *ppClassInstances, UINT NumClassInstances) {
-	sDSSetShader_Hook.fnDSSetShader(This, pDomainShader, ppClassInstances, NumClassInstances);
+	sDSSetShader_Hook.fn(This, pDomainShader, ppClassInstances, NumClassInstances);
 	if (gStereoTextureLeft > 0) {
 		if (gl_left)
 			This->DSSetShaderResources(125, 1, &gStereoResourceViewLeft);
@@ -516,7 +516,7 @@ void STDMETHODCALLTYPE D3D11C_DSSetShader(ID3D11DeviceContext * This, ID3D11Doma
 
 HRESULT STDMETHODCALLTYPE DXGIH_Present(IDXGISwapChain* This, UINT SyncInterval, UINT Flags) {
 	gl_left = !gl_left;
-	return sDXGI_Present_Hook.fnDXGI_Present(This, SyncInterval, Flags);
+	return sDXGI_Present_Hook.fn(This, SyncInterval, Flags);
 }
 
 #pragma region Hooks
@@ -623,12 +623,12 @@ void hook(ID3D11DeviceContext** ppContext) {
 			D3D11C_DSSS origDSSS = (D3D11C_DSSS)(*vTable)[64];
 			D3D11C_CSSS origCSSS = (D3D11C_CSSS)(*vTable)[69];
 
-			cHookMgr.Hook(&(sPSSetShader_Hook.nHookId), (LPVOID*)&(sPSSetShader_Hook.fnPSSetShader), origPSSS, D3D11C_PSSetShader);
-			cHookMgr.Hook(&(sVSSetShader_Hook.nHookId), (LPVOID*)&(sVSSetShader_Hook.fnVSSetShader), origVSSS, D3D11C_VSSetShader);
-			cHookMgr.Hook(&(sGSSetShader_Hook.nHookId), (LPVOID*)&(sGSSetShader_Hook.fnGSSetShader), origGSSS, D3D11C_GSSetShader);
-			cHookMgr.Hook(&(sHSSetShader_Hook.nHookId), (LPVOID*)&(sHSSetShader_Hook.fnHSSetShader), origHSSS, D3D11C_HSSetShader);
-			cHookMgr.Hook(&(sDSSetShader_Hook.nHookId), (LPVOID*)&(sDSSetShader_Hook.fnDSSetShader), origDSSS, D3D11C_DSSetShader);
-			cHookMgr.Hook(&(sCSSetShader_Hook.nHookId), (LPVOID*)&(sCSSetShader_Hook.fnCSSetShader), origCSSS, D3D11C_CSSetShader);
+			cHookMgr.Hook(&(sPSSetShader_Hook.nHookId), (LPVOID*)&(sPSSetShader_Hook.fn), origPSSS, D3D11C_PSSetShader);
+			cHookMgr.Hook(&(sVSSetShader_Hook.nHookId), (LPVOID*)&(sVSSetShader_Hook.fn), origVSSS, D3D11C_VSSetShader);
+			cHookMgr.Hook(&(sGSSetShader_Hook.nHookId), (LPVOID*)&(sGSSetShader_Hook.fn), origGSSS, D3D11C_GSSetShader);
+			cHookMgr.Hook(&(sHSSetShader_Hook.nHookId), (LPVOID*)&(sHSSetShader_Hook.fn), origHSSS, D3D11C_HSSetShader);
+			cHookMgr.Hook(&(sDSSetShader_Hook.nHookId), (LPVOID*)&(sDSSetShader_Hook.fn), origDSSS, D3D11C_DSSetShader);
+			cHookMgr.Hook(&(sCSSetShader_Hook.nHookId), (LPVOID*)&(sCSSetShader_Hook.fn), origCSSS, D3D11C_CSSetShader);
 
 			LogInfo("Context COM hooked\n");
 		}
@@ -650,12 +650,12 @@ void hook(ID3D11Device** ppDevice) {
 
 			D3D11_GIC origGIC = (D3D11_GIC)(*vTable)[40];
 
-			cHookMgr.Hook(&(sCreateVertexShader_Hook.nHookId), (LPVOID*)&(sCreateVertexShader_Hook.fnCreateVertexShader), origVS, D3D11_CreateVertexShader);
-			cHookMgr.Hook(&(sCreateGeometryShader_Hook.nHookId), (LPVOID*)&(sCreateGeometryShader_Hook.fnCreateGeometryShader), origGS, D3D11_CreateGeometryShader);
-			cHookMgr.Hook(&(sCreatePixelShader_Hook.nHookId), (LPVOID*)&(sCreatePixelShader_Hook.fnCreatePixelShader), origPS, D3D11_CreatePixelShader);
-			cHookMgr.Hook(&(sCreateHullShader_Hook.nHookId), (LPVOID*)&(sCreateHullShader_Hook.fnCreateHullShader), origHS, D3D11_CreateHullShader);
-			cHookMgr.Hook(&(sCreateDomainShader_Hook.nHookId), (LPVOID*)&(sCreateDomainShader_Hook.fnCreateDomainShader), origDS, D3D11_CreateDomainShader);
-			cHookMgr.Hook(&(sCreateComputeShader_Hook.nHookId), (LPVOID*)&(sCreateComputeShader_Hook.fnCreateComputeShader), origCS, D3D11_CreateComputeShader);
+			cHookMgr.Hook(&(sCreateVertexShader_Hook.nHookId), (LPVOID*)&(sCreateVertexShader_Hook.fn), origVS, D3D11_CreateVertexShader);
+			cHookMgr.Hook(&(sCreateGeometryShader_Hook.nHookId), (LPVOID*)&(sCreateGeometryShader_Hook.fn), origGS, D3D11_CreateGeometryShader);
+			cHookMgr.Hook(&(sCreatePixelShader_Hook.nHookId), (LPVOID*)&(sCreatePixelShader_Hook.fn), origPS, D3D11_CreatePixelShader);
+			cHookMgr.Hook(&(sCreateHullShader_Hook.nHookId), (LPVOID*)&(sCreateHullShader_Hook.fn), origHS, D3D11_CreateHullShader);
+			cHookMgr.Hook(&(sCreateDomainShader_Hook.nHookId), (LPVOID*)&(sCreateDomainShader_Hook.fn), origDS, D3D11_CreateDomainShader);
+			cHookMgr.Hook(&(sCreateComputeShader_Hook.nHookId), (LPVOID*)&(sCreateComputeShader_Hook.fn), origCS, D3D11_CreateComputeShader);
 			
 			cHookMgr.Hook(&(sGetImmediateContext_Hook.nHookId), (LPVOID*)&(sGetImmediateContext_Hook.fn), origGIC, D3D11_GetImmediateContext);
 			LogInfo("Device COM hooked\n");
@@ -692,7 +692,7 @@ void hook(ID3D11Device** ppDevice) {
 			pFactory->Release();
 			::DestroyWindow(dummyHWND);
 
-			cHookMgr.Hook(&(sDXGI_Present_Hook.nHookId), (LPVOID*)&(sDXGI_Present_Hook.fnDXGI_Present), origPresent, DXGIH_Present);
+			cHookMgr.Hook(&(sDXGI_Present_Hook.nHookId), (LPVOID*)&(sDXGI_Present_Hook.fn), origPresent, DXGIH_Present);
 
 			gl_hookedDevice = true;
 		}
