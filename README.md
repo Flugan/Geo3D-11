@@ -5,4 +5,4 @@ Regex support is expected soon.
 
 Copy ShaderFixes from the fix.
 
-Move constants from d3dx.ini in the fix
+Move constants from d3d11.ini in the fix
