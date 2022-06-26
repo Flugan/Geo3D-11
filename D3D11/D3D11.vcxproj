@@ -33,6 +33,10 @@
     <None Include="..\LICENSE" />
     <None Include="..\README.md" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="IDXGIFactoryVtbl.txt" />
+    <Text Include="IDXGISwapChainVtbl.txt" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{D879FCFA-2C4E-4521-973F-99F2FE935508}</ProjectGuid>
     <RootNamespace>D3D11</RootNamespace>
