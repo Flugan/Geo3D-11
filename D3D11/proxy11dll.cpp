@@ -41,6 +41,11 @@ float gFinalSep;
 
 map<UINT64, bool> hasStartPatch;
 map<UINT64, bool> hasStartFix;
+
+ID3D11DeviceContext* gContext;
+ID3D11VertexShader* gVertexShader;
+ID3D11ClassInstance* const* gpClassInstances;
+UINT gNumClassInstances;
 #pragma data_seg ()
 
 CNktHookLib cHookMgr;
@@ -136,13 +141,9 @@ string changeASM(vector<byte> ASM, bool left) {
 				string conv(buf);
 				string changeSep = left ? "l(-" + sep + ")" : "l(" + sep + ")";
 				shader +=
-					"eq r" + to_string(temp - 2) + ".x, r" + to_string(temp - 1) + ".w, l(1.0)\n" +
-					"if_z r" + to_string(temp - 2) + ".x\n"
 					"  add r" + to_string(temp - 2) + ".x, r" + to_string(temp - 1) + ".w, l(-" + conv + ")\n" +
 					"  mad r" + to_string(temp - 2) + ".x, r" + to_string(temp - 2) + ".x, " + changeSep + ", r" + to_string(temp - 1) + ".x\n" +
-					"  mov " + oReg + ".x, r" + to_string(temp - 2) + ".x\n" +
-					"  ret\n" +
-					"endif\n";
+					"  mov " + oReg + ".x, r" + to_string(temp - 2) + ".x\n";
 			}
 			if (oReg.size() == 0) {
 				// no output
@@ -423,13 +424,19 @@ void STDMETHODCALLTYPE D3D11_GetImmediateContext(ID3D11Device* This, ID3D11Devic
 
 #pragma region SetShader
 void STDMETHODCALLTYPE D3D11C_VSSetShader(ID3D11DeviceContext* This, ID3D11VertexShader* pVertexShader, ID3D11ClassInstance* const* ppClassInstances, UINT NumClassInstances) {
+	LogInfo("VSSetShader\n");
 	if (VSOmap.count(pVertexShader) == 1) {
 		VSO* vso = &VSOmap[pVertexShader];
 		if (vso->Neutral) {
+			gContext = nullptr;
 			LogInfo("No output VS\n");
 			sVSSetShader_Hook.fn(This, vso->Neutral, ppClassInstances, NumClassInstances);
 		}
 		else {
+			gContext = This;
+			gVertexShader = pVertexShader;
+			gpClassInstances = ppClassInstances;
+			gNumClassInstances = NumClassInstances;
 			LogInfo("Stereo VS\n");
 			if (gl_left) {
 				sVSSetShader_Hook.fn(This, vso->Left, ppClassInstances, NumClassInstances);
@@ -440,6 +447,7 @@ void STDMETHODCALLTYPE D3D11C_VSSetShader(ID3D11DeviceContext* This, ID3D11Verte
 		}
 	}
 	else {
+		gContext = nullptr;
 		LogInfo("Unknown VS\n");
 		sVSSetShader_Hook.fn(This, pVertexShader, ppClassInstances, NumClassInstances);
 	}
@@ -515,7 +523,11 @@ void STDMETHODCALLTYPE D3D11C_DSSetShader(ID3D11DeviceContext * This, ID3D11Doma
 #pragma endregion
 
 HRESULT STDMETHODCALLTYPE DXGIH_Present(IDXGISwapChain* This, UINT SyncInterval, UINT Flags) {
+	LogInfo("Present\n");
 	gl_left = !gl_left;
+	if (gContext != nullptr) {
+		gContext->VSSetShader(gVertexShader, gpClassInstances, gNumClassInstances);
+	}
 	return sDXGI_Present_Hook.fn(This, SyncInterval, Flags);
 }
 
